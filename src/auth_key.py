@@ -7,22 +7,16 @@ class AuthKey(object):
     def __init__(self, config):
         self.config = config
 
-    def cli_ensure(self):
+    def ensure(self, callback):
         self.config.auth_key = self.get_contents()
         if self.config.auth_key:
             return True
 
-        print(
-            'I will need your GMR auth key. '
-            'You can find it at http://multiplayerrobot.com/Download'
-        )
-        self.config.auth_key = raw_input('Please enter your auth key: ')
+        self.config.auth_key = callback()
 
         if self.test():
             self.save()
             return True
-
-        print('Could not authenticate. Please try again...')
 
     def test(self):
         gmr = GMR(self.config)
