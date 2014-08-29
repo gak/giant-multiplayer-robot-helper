@@ -1,6 +1,6 @@
 import os
 
-from src import GMR
+from src.gmr import GMR
 
 
 class AuthKey(object):
