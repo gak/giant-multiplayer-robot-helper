@@ -13,15 +13,19 @@ class CLI(object):
     def run(self):
         self.config = Config().parse()
 
-        self.auth_key = AuthKey(self.config)
-
-        if not self.auth_key.ensure(self.ask_auth_key):
-            print('Could not authenticate. Please try again')
+        if not self.ensure_auth_key():
             return
 
         self.gmr = GMR(self.config)
         fun = getattr(self, self.config.command)
         fun()
+
+    def ensure_auth_key(self):
+        self.auth_key = AuthKey(self.config)
+        if self.auth_key.ensure(self.ask_auth_key):
+            return True
+
+        print('Could not authenticate. Please try again')
 
     def ask_auth_key(self):
         print(
@@ -31,5 +35,9 @@ class CLI(object):
         return raw_input('Please enter your auth key: ')
 
     def games(self):
-        print(self.gmr.get_games_and_players())
+        gap = self.gmr.get_games_and_players()
+        for game in gap.games:
+            print(game)
+            for player in game.players:
+                print(player)
 

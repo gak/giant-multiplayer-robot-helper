@@ -20,12 +20,10 @@ class AuthKey(object):
 
     def test(self):
         gmr = GMR(self.config)
-
-        print('Testing...')
         return gmr.authenticate_user()
 
     def get_auth_key_path(self):
-        return os.path.join(self.config.config, 'auth_key')
+        return self.config.join('auth_key')
 
     def get_contents(self):
         try:
