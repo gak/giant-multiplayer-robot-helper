@@ -37,7 +37,10 @@ class CLI(object):
     def games(self):
         gap = self.gmr.get_games_and_players()
         for game in gap.games:
-            print(game)
+            print('\n' + game.name)
             for player in game.players:
-                print(player)
+                if player.name:
+                    print('  ' + player.name)
+                else:
+                    print('  ---')
 

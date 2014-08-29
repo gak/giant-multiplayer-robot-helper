@@ -1,4 +1,3 @@
-import pickle
 import urlparse
 
 import arrow
@@ -41,11 +40,8 @@ class GMR(object):
 
         gap = GamesAndPlayers(self.player_db).parse(data)
         missing_players = gap.missing_player_ids()
-        print('missing!!')
-        print(missing_players)
 
         if missing_players and retry_if_missing:
-            print('SECOND TIME AROUND\n\n')
             return self.get_games_and_players(
                 player_ids=list(missing_players),
                 retry_if_missing=False,
@@ -59,14 +55,12 @@ class GamesAndPlayers(object):
         self.player_db = player_db
 
     def parse(self, data):
-        import pprint
-
-        pprint.pprint(data)
-
         pdb = self.player_db
 
+        # Single values
         self.points = data.get('CurrentTotalPoints')
 
+        # Arrays
         # Players before Games
         self.players = [Player(pdb).parse(p) for p in data.get('Players')]
         self.games = [Game(pdb).parse(g) for g in data.get('Games')]
@@ -144,5 +138,5 @@ class Player(object):
         return self.name
 
     def __repr__(self):
-        return 'Player #{} {}'.format(self.id, self.name)
+        return 'Player {}'.format(self.name)
 

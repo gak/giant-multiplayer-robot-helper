@@ -24,7 +24,6 @@ class Config(object):
         self.config.join = self.join
         self.ensure_directory()
 
-        print(self.config)
         return self.config
 
     def ensure_directory(self):
