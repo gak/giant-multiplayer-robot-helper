@@ -1,8 +1,10 @@
 from __future__ import print_function
-import gmr
+from glob import glob
+import os
+import time
+import sys
 
 from src.config import Config
-
 from src.gmr import GMR
 from src.auth_key import AuthKey
 
@@ -56,7 +58,7 @@ class CLI(object):
         for game in gap.games:
             self.print_game(game)
 
-    def load(self):
+    def play(self):
         gap = self.gmr.get_games_and_players()
         choices = {}
         choice = 0
@@ -78,6 +80,34 @@ class CLI(object):
         print(game)
         print('Downloading...')
 
-        filename = self.gmr.get_latest_save_file_bytes(game.id)
-        print('Saved to {}'.format(filename))
+        save_path = self.gmr.get_latest_save_file_bytes(game.id)
+        print('Saved to {}'.format(save_path))
+
+        print('Waiting for completed game...', end='')
+        sys.stdout.flush()
+
+        # TODO: Refactor with callback and maybe timeout
+        glob_path = os.path.join(self.config.save_path, '*.Civ5Save')
+        glob_path = os.path.expanduser(glob_path)
+        original_files = set(glob(glob_path))
+        new_save_path = None
+        while True:
+            time.sleep(1)
+
+            # Callback
+            print('.', end='')
+            sys.stdout.flush()
+
+            new_files = set(glob(glob_path))
+            diff = new_files.difference(original_files)
+            if not diff:
+                continue
+
+            new_save_path = list(diff)[0]
+            break
+
+        raw_input('\nFound {}.\nUpload? ctrl-c to abort: '.format(new_save_path))
+
+        # TODO: Handle errors
+        print(self.gmr.submit_turn(game.current_turn.turn_id, new_save_path))
 

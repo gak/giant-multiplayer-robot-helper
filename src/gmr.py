@@ -17,7 +17,7 @@ class GMR(object):
         db_path = 'dbm://' + self.config.join('players')
         self.player_db = Shove(db_path)
 
-    def _get(self, fragment, params=None, raw_stream=False):
+    def _get(self, fragment, params=None, raw_stream=False, payload=None):
         params = params or {}
         params['authKey'] = self.config.auth_key
         url = urlparse.urljoin(BASE_URL, fragment)
@@ -26,7 +26,12 @@ class GMR(object):
         if raw_stream:
             kwargs['stream'] = True
 
-        request = requests.get(url, params=params, **kwargs)
+        method = requests.get
+        if payload:
+            method = requests.post
+            kwargs['data'] = payload
+
+        request = method(url, params=params, **kwargs)
 
         if raw_stream:
             return request
@@ -65,11 +70,18 @@ class GMR(object):
             'gameId': game_id,
         }, raw_stream=True)
 
-        filename = self.config.save_game_full_path()
+        full_path = self.config.save_game_full_path()
 
-        with open(filename, 'wb') as fd:
+        with open(full_path, 'wb') as fd:
             for chunk in stream.iter_content(io.DEFAULT_BUFFER_SIZE):
                 fd.write(chunk)
 
-        return filename
+        return full_path
+
+    def submit_turn(self, turn_id, full_path):
+        save_game = open(full_path, 'rb')
+
+        return self._get('SubmitTurn', {
+            'turnId': turn_id,
+        }, payload=save_game)
 
