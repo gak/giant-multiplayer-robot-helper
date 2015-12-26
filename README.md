@@ -14,8 +14,8 @@ Some python is required to be installed.
 
 Run `pip install -r requirements.txt` to install required libraries.
 
-Development Notes and Ideas
----------------------------
+Usage
+-----
 
 **./gmr games**
 
