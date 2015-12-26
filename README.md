@@ -3,9 +3,7 @@ giant-multiplayer-robot-helper
 
 A simple command line interface for http://multiplayerrobot.com/
 
-**UNDER CONSTRUCTION!**
-
-I am still developing this so it may not easily work for you.
+**NOTE** I don't really use this any more, but as far as I'm aware it is still working just as I left it--at least until GMR release their new website.
 
 Installation
 ---------------------------
